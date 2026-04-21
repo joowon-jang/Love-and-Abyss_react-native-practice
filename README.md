@@ -65,17 +65,12 @@
 - Expo Go 앱이 설치된 스마트폰 (또는 Android Studio / Xcode Simulator)
 
 ### Installation & Run
-1. 저장소 클론 및 폴더 이동
-```bash
-cd zirai-visual-novel
-```
-
-2. 종속성 설치
+1. 종속성 설치
 ```bash
 npm install
 ```
 
-3. Expo 개발 서버 실행
+2. Expo 개발 서버 실행
 ```bash
 npx expo start
 ```
