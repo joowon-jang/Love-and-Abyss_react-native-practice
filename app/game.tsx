@@ -8,14 +8,15 @@ import { Background } from '../components/Background';
 import { Character } from '../components/Character';
 import { DialogBox } from '../components/DialogBox';
 import { OptionButton } from '../components/OptionButton';
-import { storyData, StoryNode } from '../data/story';
+import { CharacterId, storyData, StoryNode } from '../data/story';
 
 export default function GameScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { route } = useLocalSearchParams<{ route: string }>();
-  // default to 'mia' if directly visited without params (for dev safety)
-  const characterId = route || 'mia';
+  const routeParam = route || 'mia';
+  // default to 'mia' if directly visited without params or with an invalid route
+  const characterId: CharacterId = routeParam in storyData ? (routeParam as CharacterId) : 'mia';
   const [currentNodeId, setCurrentNodeId] = useState<string>('start');
   
   const node: StoryNode = storyData[characterId][currentNodeId];

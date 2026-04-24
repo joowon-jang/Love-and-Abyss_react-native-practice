@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { StyleSheet, Text, View, Pressable } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { colors } from '../constants/colors';
@@ -12,26 +12,41 @@ interface DialogBoxProps {
 
 export function DialogBox({ speaker, text, onNext, isInteractable }: DialogBoxProps) {
   const [displayedText, setDisplayedText] = useState('');
+  const typingTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // Typing effect
   useEffect(() => {
     let i = 0;
+    if (typingTimerRef.current) {
+      clearInterval(typingTimerRef.current);
+    }
     setDisplayedText('');
-    const timer = setInterval(() => {
+    typingTimerRef.current = setInterval(() => {
       setDisplayedText(text.substring(0, i + 1));
       i++;
-      if (i >= text.length) clearInterval(timer);
+      if (i >= text.length && typingTimerRef.current) {
+        clearInterval(typingTimerRef.current);
+        typingTimerRef.current = null;
+      }
     }, 30);
-    return () => clearInterval(timer);
+    return () => {
+      if (typingTimerRef.current) {
+        clearInterval(typingTimerRef.current);
+        typingTimerRef.current = null;
+      }
+    };
   }, [text]);
 
   const isFinished = displayedText === text;
 
   const handlePress = () => {
-    if (!isInteractable) return;
     if (!isFinished) {
+      if (typingTimerRef.current) {
+        clearInterval(typingTimerRef.current);
+        typingTimerRef.current = null;
+      }
       setDisplayedText(text); // Skip typing
-    } else {
+    } else if (isInteractable) {
       onNext();
     }
   };
